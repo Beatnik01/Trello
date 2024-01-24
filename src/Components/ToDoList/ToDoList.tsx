@@ -1,8 +1,10 @@
 import { useForm } from "react-hook-form";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { IToDo, categoryState, toDoState } from "../atoms";
+import { useSetRecoilState } from "recoil";
+import { IToDo, toDoState } from "../../atoms";
 import styled from "styled-components";
 import { useState } from "react";
+import ToDo from "./ToDo";
+import Category from "./Category";
 
 interface IToDoProps {
   toDos: IToDo[];
@@ -27,7 +29,7 @@ const Title = styled.div`
 
 const TitleText = styled.h2`
   text-align: center !important;
-  font-weight: 800;
+  font-weight: 600;
   font-size: 23px;
   cursor: pointer;
   width: 100%;
@@ -55,7 +57,9 @@ const TitleBtn = styled.button`
 
 const Form = styled.form`
   padding: 0px 20px;
-  padding-bottom: 10px;
+  &:last-child {
+    padding-bottom: 10px;
+  }
   input {
     display: flex;
     align-items: center;
@@ -77,30 +81,12 @@ const CategoryContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 5px 20px;
+  padding: 0px 20px;
   border: 2px solid transparent;
   min-height: 36px;
 `;
 
-const CategoryBtns = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 80%;
-  gap: 5px;
-  overflow: hidden;
-  max-height: 30px;
-  button {
-    border-radius: 8px;
-    border: none;
-    padding: 5px;
-    background-color: white;
-    box-shadow: 0px 1px 1px #091e4240, 0px 0px 1px #091e424f;
-    border: 2px solid transparent;
-    cursor: pointer;
-  }
-`;
-
-const CategoryAdd = styled.div`
+const CategoryBtn = styled.div`
   display: flex;
   justify-content: center;
   width: 20%;
@@ -111,6 +97,7 @@ const CategoryAdd = styled.div`
     color: white;
     border: none;
     border-radius: 50%;
+    cursor: pointer;
   }
 `;
 
@@ -120,39 +107,13 @@ const TodoList = styled.div`
   padding: 0px 20px;
 `;
 
-const Todo = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  background-color: ${(props) => props.theme.cardColor};
-  padding: 5px 10px;
-  box-shadow: 0px 1px 1px #091e4240, 0px 0px 1px #091e424f;
-  border: 2px solid transparent;
-  border-radius: 8px;
-  margin-bottom: 5px;
-  min-height: 36px;
-  &:hover {
-    border: 2px solid ${(props) => props.theme.bgColor};
-    box-shadow: none;
-  }
-  span:first-child {
-    overflow-wrap: anywhere;
-  }
-  span:last-child {
-    position: absolute;
-    right: 10px;
-  }
-`;
-
 const Hr = styled.hr`
   width: 90%;
 `;
 
 function ToDoList({ toDos, toDoId }: IToDoProps) {
-  const [toDosArr, setToDos] = useRecoilState(toDoState);
+  const setToDos = useSetRecoilState(toDoState);
   const { register, handleSubmit, setValue } = useForm();
-  const setCategory = useSetRecoilState(categoryState);
   const [isCategoryVisible, setIsCategoryVisible] = useState(true);
   const [isCategoryInputActive, setIsCategoryInputActive] = useState(false);
   const onValid = ({ toDo }: any) => {
@@ -170,7 +131,6 @@ function ToDoList({ toDos, toDoId }: IToDoProps) {
     setValue("toDo", "");
   };
   const addCategory = ({ toDoId }: any) => {
-    console.log(toDoId);
     setToDos((allToDos) => {
       return {
         ...allToDos,
@@ -178,10 +138,9 @@ function ToDoList({ toDos, toDoId }: IToDoProps) {
       };
     });
     setValue("toDoId", "");
+    setIsCategoryVisible(true);
   };
-  const onClickCategory = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setCategory(e.currentTarget.innerText);
-  };
+
   const handleTitleTextClick = () => {
     setIsCategoryVisible(!isCategoryVisible);
     setIsCategoryInputActive(true);
@@ -201,16 +160,10 @@ function ToDoList({ toDos, toDoId }: IToDoProps) {
       </Title>
       {isCategoryVisible ? (
         <CategoryContainer>
-          <CategoryBtns>
-            {Object.keys(toDosArr).map((toDoId) => (
-              <button key={toDoId} onClick={onClickCategory}>
-                {toDoId}
-              </button>
-            ))}
-          </CategoryBtns>
-          <CategoryAdd>
+          <Category />
+          <CategoryBtn>
             <button onClick={handleTitleTextClick}>+</button>
-          </CategoryAdd>
+          </CategoryBtn>
         </CategoryContainer>
       ) : (
         <Form onSubmit={handleSubmit(addCategory)}>
@@ -224,9 +177,7 @@ function ToDoList({ toDos, toDoId }: IToDoProps) {
       )}
       <Hr />
       <TodoList>
-        {toDos.map((toDo) => (
-          <Todo key={toDo.id}>{toDo.text}</Todo>
-        ))}
+        <ToDo toDoId={toDoId} key={toDoId} toDos={toDos}></ToDo>
       </TodoList>
       <Hr />
       <Form onSubmit={handleSubmit(onValid)}>

@@ -2,7 +2,7 @@ import { Droppable } from "react-beautiful-dnd";
 import DragabbleCard from "./DraggableCard";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
-import { IToDo, toDoState } from "../atoms";
+import { IToDo, toDoState } from "../../atoms";
 import { useSetRecoilState } from "recoil";
 import { useState } from "react";
 

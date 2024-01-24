@@ -2,8 +2,8 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { categoryState, toDoState, toggleMode } from "./atoms";
-import Board from "./Components/Board";
-import ToDo from "./Components/ToDoList";
+import Board from "./Components/Board/Board";
+import ToDo from "./Components/ToDoList/ToDoList";
 
 const Wrapper = styled.div`
   display: flex;
