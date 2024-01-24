@@ -2,7 +2,7 @@ import { Droppable } from "react-beautiful-dnd";
 import DragabbleCard from "./DraggableCard";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
-import { IToDo, boardState } from "../atoms";
+import { IToDo, toDoState } from "../atoms";
 import { useSetRecoilState } from "recoil";
 import { useState } from "react";
 
@@ -111,7 +111,7 @@ interface IForm {
 }
 
 function Board({ toDos, boardId }: IBoardProps) {
-  const setToDos = useSetRecoilState(boardState);
+  const setToDos = useSetRecoilState(toDoState);
   const { register, setValue, handleSubmit } = useForm<IForm>();
   const [isTitleTextVisible, setIsTitleTextVisible] = useState(true);
   const [isInputActive, setIsInputActive] = useState(false);
@@ -120,6 +120,7 @@ function Board({ toDos, boardId }: IBoardProps) {
     const newToDo = {
       id: Date.now(),
       text: toDo,
+      category: boardId,
     };
     setToDos((allBoards) => {
       return {
@@ -140,7 +141,6 @@ function Board({ toDos, boardId }: IBoardProps) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitleValue(e.target.value);
     boardId = e.target.value;
-    console.log(boardId);
   };
 
   return (

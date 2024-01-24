@@ -4,38 +4,37 @@ import { recoilPersist } from "recoil-persist";
 export interface IToDo {
   id: number;
   text: string;
+  category: string;
 }
 
 interface IboardState {
   [key: string]: IToDo[];
 }
 
+// =========================================
+// recoil-persist, localStorage 저장용.
 const { persistAtom } = recoilPersist({
   key: "todoLocal",
   storage: localStorage,
 });
+// =========================================
 
 export const toggleMode = atom<boolean>({
   key: "mode",
-  default: false,
+  default: true,
 });
 
-export const categories = atom<string[]>({
-  key: "categories",
-  default: ["To Do", "Doing", "Done"],
+export const categoryState = atom<string>({
+  key: "category",
+  default: "To Do",
 });
 
-export const toDoState = atom<IToDo[]>({
-  key: "toDo",
-  default: [],
-  effects_UNSTABLE: [persistAtom],
-});
-
-export const boardState = atom<IboardState>({
+export const toDoState = atom<IboardState>({
   key: "toDo",
   default: {
     "To Do": [],
     Doing: [],
     Done: [],
   },
+  effects: [persistAtom],
 });

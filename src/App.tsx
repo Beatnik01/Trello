@@ -1,9 +1,9 @@
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { boardState, toggleMode } from "./atoms";
+import { categoryState, toDoState, toggleMode } from "./atoms";
 import Board from "./Components/Board";
-import ToDo from "./Components/ToDo";
+import ToDo from "./Components/ToDoList";
 
 const Wrapper = styled.div`
   display: flex;
@@ -31,6 +31,9 @@ const ToDos = styled.div`
 `;
 
 const ToggleButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 50px;
   height: 50px;
   padding: 10px;
@@ -38,12 +41,14 @@ const ToggleButton = styled.button`
   border: none;
   background-color: ${(props) => props.theme.divColor};
   font-size: 20px;
+  font-weight: 600;
   cursor: pointer;
 `;
 
 function App() {
-  const [toDos, setToDos] = useRecoilState(boardState);
+  const [toDos, setToDos] = useRecoilState(toDoState);
   const [mode, setMode] = useRecoilState(toggleMode);
+  const category = useRecoilValue(categoryState);
   const onDragEnd = (info: DropResult) => {
     const { destination, source } = info;
     if (!destination) return;
@@ -78,22 +83,25 @@ function App() {
   };
   const toggleModeAtom = () => {
     setMode((prev) => !prev);
-    console.log(mode);
   };
   return (
     <>
       {mode ? (
         <>
-          <ToggleButton onClick={toggleModeAtom}>click</ToggleButton>
+          <ToggleButton onClick={toggleModeAtom}>Click</ToggleButton>
           <Wrapper>
             <ToDos>
-              <ToDo />
+              {Object.keys(toDos)
+                .filter((toDoId) => toDoId === category)
+                .map((toDoId) => (
+                  <ToDo key={toDoId} toDoId={toDoId} toDos={toDos[toDoId]} />
+                ))}
             </ToDos>
           </Wrapper>
         </>
       ) : (
         <>
-          <ToggleButton onClick={toggleModeAtom}>click</ToggleButton>
+          <ToggleButton onClick={toggleModeAtom}>Click</ToggleButton>
           <DragDropContext onDragEnd={onDragEnd}>
             <Wrapper>
               <Boards>
